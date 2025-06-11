@@ -1,0 +1,11 @@
+{% extends 'fastfood/base.html' %}
+{% block title %}О компании{% endblock %}
+{% block content %}
+<h2 class="text-2xl font-bold mb-4">О компании "Вкусно - и точка"</h2>
+<p class="mb-4">Мы - сеть ресторанов быстрого питания, предлагающая вкусные и качественные блюда для всей семьи. Наша миссия - радовать вас свежими ингредиентами и быстрым обслуживанием.</p>
+<p>Узнайте больше о нас:</p>
+<ul class="list-disc ml-6">
+    <li><a href="{% url 'contacts' %}" class="text-blue-500 hover:underline">Контакты</a></li>
+    <li><a href="{% url 'find_us' %}" class="text-blue-500 hover:underline">Как нас найти</a></li>
+</ul>
+{% endblock %}

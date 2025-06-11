@@ -1,0 +1,17 @@
+{% extends 'fastfood/base.html' %}
+{% block title %}Удалить категорию{% endblock %}
+{% block content %}
+<div class="max-w-5xl mx-auto">
+    <div class="bg-white p-6 md:p-8 rounded-lg shadow-lg">
+        <h2 class="text-2xl font-bold text-red-600 mb-4">Удалить категорию</h2>
+        <p class="text-gray-700 mb-4">Вы уверены, что хотите удалить категорию <strong>{{ object.name }}</strong>? Это действие нельзя отменить.</p>
+        <form method="post">
+            {% csrf_token %}
+            <div class="flex space-x-4">
+                <button type="submit" class="bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700 font-semibold">Удалить</button>
+                <a href="{% url 'category_list' %}" class="bg-gray-500 text-white px-4 py-2 rounded hover:bg-gray-600 font-semibold">Отмена</a>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

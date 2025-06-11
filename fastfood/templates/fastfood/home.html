@@ -1,0 +1,10 @@
+{% extends 'fastfood/base.html' %}
+{% block title %}Главная{% endblock %}
+{% block content %}
+<div class="text-center">
+    <h2 class="text-3xl font-bold text-red-600 mb-4">Добро пожаловать в "Вкусно - и точка"!</h2>
+    <p class="text-lg mb-4">Ознакомьтесь с нашим меню, акциями и закажите доставку прямо сейчас!</p>
+    <a href="{% url 'dish_list' %}" class="bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700">Посмотреть меню</a>
+    <a href="{% url 'promotion_list' %}" class="ml-4 bg-yellow-500 text-white px-4 py-2 rounded hover:bg-yellow-600">Акции</a>
+</div>
+{% endblock %}

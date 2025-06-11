@@ -1,0 +1,30 @@
+{% extends 'fastfood/base.html' %}
+{% block title %}{{ contact.city }} - Контакт{% endblock %}
+{% block content %}
+<div class="max-w-5xl mx-auto">
+    <div class="bg-white p-6 md:p-8 rounded-lg shadow-lg hover:shadow-xl transition-shadow duration-300">
+        <h1 class="text-3xl md:text-4xl font-bold text-red-600 mb-6">{{ contact.city }}</h1>
+        <div class="flex flex-col gap-6">
+            <div>
+                <p class="text-lg text-gray-700 mb-2"><strong>Адрес:</strong> {{ contact.address }}</p>
+                <p class="text-lg text-gray-700 mb-2"><strong>Телефон:</strong> {{ contact.phone }}</p>
+                <p class="text-lg text-gray-700"><strong>Email:</strong> <a href="mailto:{{ contact.email }}" class="text-yellow-500 hover:text-yellow-600">{{ contact.email }}</a></p>
+            </div>
+            <div class="flex flex-wrap gap-4">
+                <a href="{% url 'contact_update' contact.pk %}" 
+                   class="inline-flex items-center px-4 py-2 bg-yellow-500 text-white font-semibold rounded-lg hover:bg-yellow-600 transition-colors duration-200">
+                    Редактировать
+                </a>
+                <a href="{% url 'contact_delete' contact.pk %}" 
+                   class="inline-flex items-center px-4 py-2 bg-red-600 text-white font-semibold rounded-lg hover:bg-red-700 transition-colors duration-200">
+                    Удалить
+                </a>
+                <a href="{% url 'contacts' %}" 
+                   class="inline-flex items-center px-4 py-2 bg-gray-500 text-white font-semibold rounded-lg hover:bg-gray-600 transition-colors duration-200">
+                    Назад к контактам
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,20 @@
+{% extends 'fastfood/base.html' %}
+{% block title %}Заказы{% endblock %}
+{% block content %}
+<h2 class="text-2xl font-bold mb-4">Заказы</h2>
+<div class="space-y-4">
+    {% for order in orders %}
+    <div class="border p-4 rounded shadow">
+        <h3 class="text-xl font-semibold">Заказ #{{ order.id }}</h3>
+        <p><strong>Клиент:</strong> {{ order.customer_name }}</p>
+        <p><strong>Адрес:</strong> {{ order.address }}</p>
+        <p><strong>Сумма:</strong> {{ order.total_price }} ₽</p>
+        <p><strong>Дата:</strong> {{ order.created_at }}</p>
+        <a href="{% url 'order_detail' order.pk %}" class="text-blue-500 hover:underline">Подробнее</a>
+    </div>
+    {% empty %}
+    <p>Заказы отсутствуют.</p>
+    {% endfor %}
+</div>
+<a href="{% url 'order_create' %}" class="mt-4 inline-block bg-red-600 text-white px-4 py-2 rounded">Добавить заказ</a>
+{% endblock %}
