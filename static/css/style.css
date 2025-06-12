@@ -1,0 +1,144 @@
+/* Основные стили для всего сайта */
+html {
+    height: 100%;
+}
+
+body {
+    font-family: 'Arial', sans-serif;
+    margin: 0;
+    min-height: 100%;
+    display: flex;
+    flex-direction: column;
+    background-color: #f3f4f6;
+    /* bg-gray-100 */
+}
+
+/* Стили для хедера */
+header {
+    background-color: #D2232A;
+    /* Красный цвет бренда */
+    color: #FFFFFF;
+}
+
+/* Стили для навигации */
+nav ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+nav ul li {
+    position: relative;
+}
+
+/* Выпадающее меню */
+nav ul ul {
+    display: none;
+    /* Скрыто по умолчанию */
+    position: absolute;
+    top: 100%;
+    left: 0;
+    background-color: #D2232A;
+    /* Красный фон для подменю */
+    border-radius: 0.375rem;
+    /* rounded */
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    /* shadow-lg */
+    width: 12rem;
+    /* w-48 */
+    z-index: 10;
+}
+
+nav ul li:hover>ul {
+    display: block;
+    /* Показ при наведении */
+}
+
+nav ul ul li {
+    margin: 0;
+}
+
+nav ul ul li a {
+    display: block;
+    padding: 0.5rem 1rem;
+    /* px-4 py-2 */
+    color: #FFFFFF;
+    text-decoration: none;
+    transition: background-color 0.3s, color 0.3s;
+}
+
+nav ul ul li a:hover {
+    background-color: #FFC107;
+    /* Жёлтый акцент при наведении */
+    color: #1F2A44;
+    /* Тёмно-серый текст */
+}
+
+/* Основной контент */
+main {
+    flex: 1;
+    /* Занимает всё доступное пространство */
+    padding: 1.5rem;
+    /* px-4 py-6 */
+}
+
+/* Футер */
+footer {
+    background-color: #1F2A44;
+    /* Тёмно-серый фон */
+    color: #FFFFFF;
+    padding: 1rem;
+    /* p-4 */
+    text-align: center;
+}
+
+/* Стили для изображений */
+img {
+    max-width: 100%;
+    height: auto;
+    border-radius: 0.375rem;
+    /* rounded */
+}
+
+/* Стили для кнопок */
+a.bg-red-600,
+button.bg-red-600 {
+    background-color: #D2232A;
+    transition: background-color 0.3s;
+}
+
+a.bg-red-600:hover,
+button.bg-red-600:hover {
+    background-color: #b91c1c;
+    /* Темнее красного */
+}
+
+a.bg-yellow-500,
+button.bg-yellow-500 {
+    background-color: #FFC107;
+    transition: background-color 0.3s;
+}
+
+a.bg-yellow-500:hover,
+button.bg-yellow-500:hover {
+    background-color: #e0a800;
+    /* Темнее жёлтого */
+}
+
+/* Адаптивность для мобильных устройств */
+@media (max-width: 640px) {
+    nav ul {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    nav ul li {
+        margin-bottom: 0.5rem;
+    }
+
+    nav ul ul {
+        position: static;
+        width: 100%;
+        box-shadow: none;
+    }
+}

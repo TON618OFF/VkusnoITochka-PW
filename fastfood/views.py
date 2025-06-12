@@ -2,6 +2,7 @@ from django.shortcuts import render, get_object_or_404, redirect
 from django.views.generic import TemplateView, ListView, DetailView, CreateView, UpdateView, DeleteView, View
 from django.urls import reverse_lazy
 from .models import Category, Dish, Promotion, Order, Contact, DeliveryInfo
+from .forms import ContactForm, CategoryForm, DishForm, PromotionForm, OrderForm
 
 # Create your views here.
 class HomeView(TemplateView):
@@ -26,13 +27,13 @@ class ContactDetailView(DetailView):
 class ContactCreateView(CreateView):
     model = Contact
     template_name = 'fastfood/contact_form.html'
-    fields = ['address', 'phone', 'email']
+    form_class = ContactForm
     success_url = reverse_lazy('contacts')
 
 class ContactUpdateView(UpdateView):
     model = Contact
     template_name = 'fastfood/contact_form.html'
-    fields = ['address', 'phone', 'email']
+    form_class = ContactForm
     success_url = reverse_lazy('contacts')
 
 class ContactDeleteView(DeleteView):
@@ -56,13 +57,13 @@ class CategoryDetailView(DetailView):
 class CategoryCreateView(CreateView):
     model = Category
     template_name = 'fastfood/category_form.html'
-    fields = ['name', 'description']
+    form_class = CategoryForm
     success_url = reverse_lazy('category_list')
 
 class CategoryUpdateView(UpdateView):
     model = Category
     template_name = 'fastfood/category_form.html'
-    fields = ['name', 'description']
+    form_class = CategoryForm
     success_url = reverse_lazy('category_list')
 
 class CategoryDeleteView(DeleteView):
@@ -97,13 +98,13 @@ class DishDetailView(DetailView):
 class DishCreateView(CreateView):
     model = Dish
     template_name = 'fastfood/dish_form.html'
-    fields = ['name', 'category', 'price', 'description', 'image']
+    form_class = DishForm
     success_url = reverse_lazy('dish_list')
 
 class DishUpdateView(UpdateView):
     model = Dish
     template_name = 'fastfood/dish_form.html'
-    fields = ['name', 'category', 'price', 'description', 'image']
+    form_class = DishForm
     success_url = reverse_lazy('dish_list')
 
 class DishDeleteView(DeleteView):
@@ -174,13 +175,13 @@ class PromotionDetailView(DetailView):
 class PromotionCreateView(CreateView):
     model = Promotion
     template_name = 'fastfood/promotion_form.html'
-    fields = ['title', 'description', 'image', 'start_date', 'end_date']
+    form_class = PromotionForm
     success_url = reverse_lazy('promotion_list')
 
 class PromotionUpdateView(UpdateView):
     model = Promotion
     template_name = 'fastfood/promotion_form.html'
-    fields = ['title', 'description', 'image', 'start_date', 'end_date']
+    form_class = PromotionForm
     success_url = reverse_lazy('promotion_list')
 
 class PromotionDeleteView(DeleteView):
@@ -201,13 +202,13 @@ class OrderDetailView(DetailView):
 class OrderCreateView(CreateView):
     model = Order
     template_name = 'fastfood/order_form.html'
-    fields = ['customer_name', 'address', 'total_price']
+    form_class = OrderForm
     success_url = reverse_lazy('order_list')
 
 class OrderUpdateView(UpdateView):
     model = Order
     template_name = 'fastfood/order_form.html'
-    fields = ['customer_name', 'address', 'total_price']
+    form_class = OrderForm
     success_url = reverse_lazy('order_list')
 
 class OrderDeleteView(DeleteView):
