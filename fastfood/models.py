@@ -1,9 +1,9 @@
 from django.db import models
+from django.contrib.auth.models import User
 
-# Create your models here.
 class Category(models.Model):
-    name = models.CharField(max_length=100, verbose_name="Название категории")
-    description = models.TextField(blank=True, verbose_name="Описание")
+    name = models.CharField(max_length=100, verbose_name="Название")
+    description = models.TextField(verbose_name="Описание", blank=True)
     
     class Meta:
         verbose_name = "Категория"
@@ -13,11 +13,11 @@ class Category(models.Model):
         return self.name
 
 class Dish(models.Model):
-    name = models.CharField(max_length=100, verbose_name="Название блюда")
-    category = models.ForeignKey(Category, on_delete=models.CASCADE, verbose_name="Категория")
+    name = models.CharField(max_length=100, verbose_name="Название")
+    description = models.TextField(verbose_name="Описание", blank=True)
     price = models.DecimalField(max_digits=10, decimal_places=2, verbose_name="Цена")
-    description = models.TextField(blank=True, verbose_name="Описание")
-    image = models.ImageField(upload_to='dishes/', blank=True, null=True, verbose_name="Фото блюда")
+    image = models.ImageField(upload_to='dishes/', verbose_name="Изображение", blank=True, null=True)
+    category = models.ForeignKey(Category, on_delete=models.CASCADE, verbose_name="Категория")
     
     class Meta:
         verbose_name = "Блюдо"
@@ -27,9 +27,9 @@ class Dish(models.Model):
         return self.name
 
 class Promotion(models.Model):
-    title = models.CharField(max_length=200, verbose_name="Название акции")
-    description = models.TextField(verbose_name="Описание")
-    image = models.ImageField(upload_to='promotions/', blank=True, null=True, verbose_name="Фото акции")
+    title = models.CharField(max_length=100, verbose_name="Название")
+    description = models.TextField(verbose_name="Описание", blank=True)
+    image = models.ImageField(upload_to='promotions/', verbose_name="Изображение", blank=True, null=True)
     start_date = models.DateField(verbose_name="Дата начала")
     end_date = models.DateField(verbose_name="Дата окончания")
     
@@ -39,44 +39,6 @@ class Promotion(models.Model):
     
     def __str__(self):
         return self.title
-
-class Order(models.Model):
-    customer_name = models.CharField(max_length=100, verbose_name="Имя клиента")
-    address = models.TextField(verbose_name="Адрес доставки")
-    total_price = models.DecimalField(max_digits=10, decimal_places=2, verbose_name="Общая стоимость")
-    created_at = models.DateTimeField(auto_now_add=True, verbose_name="Дата создания")
-    
-    class Meta:
-        verbose_name = "Заказ"
-        verbose_name_plural = "Заказы"
-    
-    def __str__(self):
-        return f"Заказ {self.id} от {self.customer_name}"
-
-class OrderItem(models.Model):
-    order = models.ForeignKey(Order, on_delete=models.CASCADE, verbose_name="Заказ")
-    dish = models.ForeignKey(Dish, on_delete=models.CASCADE, verbose_name="Блюдо")
-    quantity = models.PositiveIntegerField(default=1, verbose_name="Количество")
-    
-    class Meta:
-        verbose_name = "Элемент заказа"
-        verbose_name_plural = "Элементы заказа"
-    
-    def __str__(self):
-        return f"{self.dish.name} x {self.quantity}"
-
-class Review(models.Model):
-    dish = models.ForeignKey(Dish, on_delete=models.CASCADE, verbose_name="Блюдо")
-    customer_name = models.CharField(max_length=100, verbose_name="Имя клиента")
-    comment = models.TextField(verbose_name="Комментарий")
-    rating = models.PositiveIntegerField(verbose_name="Оценка")
-    
-    class Meta:
-        verbose_name = "Отзыв"
-        verbose_name_plural = "Отзывы"
-    
-    def __str__(self):
-        return f"Отзыв на {self.dish.name}"
 
 class Contact(models.Model):
     address = models.TextField(verbose_name="Адрес")
@@ -90,12 +52,65 @@ class Contact(models.Model):
     def __str__(self):
         return self.address
 
-class DeliveryInfo(models.Model):
-    description = models.TextField(verbose_name="Информация о доставке")
+class UserProfile(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE, verbose_name="Пользователь")
+    last_name = models.CharField(max_length=100, verbose_name="Фамилия")
+    first_name = models.CharField(max_length=100, verbose_name="Имя")
+    patronymic = models.CharField(max_length=100, verbose_name="Отчество", blank=True)
+    phone = models.CharField(max_length=20, verbose_name="Телефон")
+    address = models.TextField(verbose_name="Адрес", blank=True)
     
     class Meta:
-        verbose_name = "Информация о доставке"
-        verbose_name_plural = "Информация о доставке"
+        verbose_name = "Профиль пользователя"
+        verbose_name_plural = "Профили пользователей"
     
     def __str__(self):
-        return "Информация о доставке"
+        return f"{self.last_name} {self.first_name}"
+
+class Order(models.Model):
+    DELIVERY_TYPES = (
+        ('pickup', 'Самовывоз'),
+        ('courier', 'Курьером'),
+    )
+    user = models.ForeignKey(User, on_delete=models.CASCADE, verbose_name="Пользователь")
+    last_name = models.CharField(max_length=100, verbose_name="Фамилия")
+    first_name = models.CharField(max_length=100, verbose_name="Имя")
+    patronymic = models.CharField(max_length=100, verbose_name="Отчество", blank=True)
+    phone = models.CharField(max_length=20, verbose_name="Телефон")
+    email = models.EmailField(verbose_name="Email")
+    address = models.TextField(verbose_name="Адрес доставки")
+    total_price = models.DecimalField(max_digits=10, decimal_places=2, verbose_name="Общая стоимость")
+    delivery_type = models.CharField(max_length=20, choices=DELIVERY_TYPES, verbose_name="Тип доставки")
+    created_at = models.DateTimeField(auto_now_add=True, verbose_name="Дата создания")
+    
+    class Meta:
+        verbose_name = "Заказ"
+        verbose_name_plural = "Заказы"
+    
+    def __str__(self):
+        return f"Заказ {self.id} от {self.last_name} {self.first_name}"
+
+class OrderItem(models.Model):
+    order = models.ForeignKey(Order, on_delete=models.CASCADE, verbose_name="Заказ")
+    dish = models.ForeignKey(Dish, on_delete=models.CASCADE, verbose_name="Блюдо")
+    quantity = models.PositiveIntegerField(default=1, verbose_name="Количество")
+    
+    class Meta:
+        verbose_name = "Элемент заказа"
+        verbose_name_plural = "Элементы заказа"
+    
+    def __str__(self):
+        return f"{self.dish.name} x {self.quantity}"
+
+class Delivery(models.Model):
+    order = models.OneToOneField(Order, on_delete=models.CASCADE, verbose_name="Заказ")
+    status = models.CharField(max_length=100, verbose_name="Статус", default="В обработке")
+    courier_info = models.TextField(verbose_name="Информация о курьере", blank=True)
+    estimated_time = models.DateTimeField(verbose_name="Ориентировочное время доставки", null=True, blank=True)
+    
+    class Meta:
+        verbose_name = "Доставка"
+        verbose_name_plural = "Доставки"
+    
+    def __str__(self):
+        return f"Доставка для заказа {self.order.id}"

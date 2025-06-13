@@ -20,9 +20,11 @@ from django.conf import settings
 from django.conf.urls.static import static
 
 
+
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', include('fastfood.urls')),
+    path('', include('vkusno_cart.urls')),
 ]
 
 if settings.DEBUG:

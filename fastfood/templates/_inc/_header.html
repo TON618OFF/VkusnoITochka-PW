@@ -4,27 +4,50 @@
         <div class="flex items-center mb-4 sm:mb-0">
             <h1 class="text-3xl font-bold tracking-tight">Вкусно - и точка</h1>
         </div>
-        <ul class="flex flex-col sm:flex-row sm:space-x-6 space-y-2 sm:space-y-0 text-lg">
+        <ul class="flex flex-col sm:flex-row sm:space-x-6 text-lg items-center">
             <li>
-                <a href="{% url 'home' %}" class="hover:bg-yellow-500 hover:text-gray-800 px-3 py-2 rounded transition duration-300">Главная</a>
+                <a href="{% url 'home' %}" class="block hover:bg-yellow-500 hover:text-gray-800 px-3 py-2 rounded transition duration-300">Главная</a>
             </li>
             <li class="relative group">
-                <a href="{% url 'about' %}" class="hover:bg-yellow-500 hover:text-gray-800 px-3 py-2 rounded transition duration-300">О компании</a>
+                <a href="{% url 'about' %}" class="block hover:bg-yellow-500 hover:text-gray-800 px-3 py-2 rounded transition duration-300">О компании</a>
                 <ul class="absolute hidden group-hover:block bg-red-600 text-white shadow-lg rounded mt-2 w-48">
                     <li><a href="{% url 'contacts' %}" class="block px-4 py-2 hover:bg-yellow-500 hover:text-gray-800 transition duration-300">Контакты</a></li>
                     <li><a href="{% url 'find_us' %}" class="block px-4 py-2 hover:bg-yellow-500 hover:text-gray-800 transition duration-300">Как нас найти</a></li>
                 </ul>
             </li>
             <li class="relative group">
-                <a href="{% url 'dish_list' %}" class="hover:bg-yellow-500 hover:text-gray-800 px-3 py-2 rounded transition duration-300">Товары</a>
+                <a href="{% url 'dish_list' %}" class="block hover:bg-yellow-500 hover:text-gray-800 px-3 py-2 rounded transition duration-300">Товары</a>
                 <ul class="absolute hidden group-hover:block bg-red-600 text-white shadow-lg rounded mt-2 w-48">
                     <li><a href="{% url 'category_list' %}" class="block px-4 py-2 hover:bg-yellow-500 hover:text-gray-800 transition duration-300">Категории</a></li>
                     <li><a href="{% url 'dish_list' %}" class="block px-4 py-2 hover:bg-yellow-500 hover:text-gray-800 transition duration-300">Все товары</a></li>
                 </ul>
             </li>
-            <li><a href="{% url 'cart' %}" class="hover:bg-yellow-500 hover:text-gray-800 px-3 py-2 rounded transition duration-300">Корзина</a></li>
-            <li><a href="{% url 'promotion_list' %}" class="hover:bg-yellow-500 hover:text-gray-800 px-3 py-2 rounded transition duration-300">Акции</a></li>
-            <li><a href="{% url 'delivery' %}" class="hover:bg-yellow-500 hover:text-gray-800 px-3 py-2 rounded transition duration-300">Доставка</a></li>
+            {% if user.is_authenticated %}
+            <li>
+                <a href="{% url 'cart' %}" class="block hover:bg-yellow-500 hover:text-gray-800 px-3 py-2 rounded transition duration-300">Корзина</a>
+            </li>
+            {% endif %}
+            <li>
+                <a href="{% url 'promotion_list' %}" class="block hover:bg-yellow-500 hover:text-gray-800 px-3 py-2 rounded transition duration-300">Акции</a>
+            </li>
+            {% if user.is_authenticated %}
+                <li>
+                    <a href="{% url 'profile' %}" class="block hover:bg-yellow-500 hover:text-gray-800 px-3 py-2 rounded transition duration-300">Профиль</a>
+                </li>
+                <li>
+                    <form action="{% url 'logout' %}" method="post" class="inline">
+                        {% csrf_token %}
+                        <button type="submit" class="block w-full text-left hover:bg-yellow-500 hover:text-gray-800 px-3 py-2 rounded transition duration-300 bg-transparent border-none cursor-pointer">Выход</button>
+                    </form>
+                </li>
+            {% else %}
+                <li>
+                    <a href="{% url 'login' %}" class="block hover:bg-yellow-500 hover:text-gray-800 px-3 py-2 rounded transition duration-300">Вход</a>
+                </li>
+                <li>
+                    <a href="{% url 'register' %}" class="block hover:bg-yellow-500 hover:text-gray-800 px-3 py-2 rounded transition duration-300">Регистрация</a>
+                </li>
+            {% endif %}
         </ul>
     </nav>
-</header>   
+</header>

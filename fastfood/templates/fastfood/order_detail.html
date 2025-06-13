@@ -2,16 +2,43 @@
 {% block title %}Заказ #{{ order.id }}{% endblock %}
 {% block content %}
 <div class="bg-white p-6 rounded-lg shadow-lg">
-    <h2 class="text-2xl font-bold text-red-600 mb-4">Заказ #{{ order.id }}</h2>
-    <div class="space-y-2">
-        <p class="text-gray-700"><strong>Клиент:</strong> {{ order.customer_name }}</p>
-        <p class="text-gray-700"><strong>Адрес:</strong> {{ order.address }}</p>
-        <p class="text-gray-700"><strong>Сумма:</strong> {{ order.price }} ₽</p>
-        <p class="text-gray-700"><strong>Дата:</strong> {{ order.created_at }}</p>
-        <div class="mt-4 flex space-x-4">
-            <a href="{% url 'order_update' order.id %}" class="text-yellow-500 hover:text-yellow-600 font-semibold">Редактировать</a>
-            <a href="{% url 'order_delete' order.id %}" class="text-red-500 hover:text-red-600 font-semibold">Удалить</a>
-            <a href="{% url 'order_list' %}" class="text-gray-500 hover:text-gray-600 font-semibold">Назад к списку</a>
+    <h2 class="text-2xl font-bold text-red-600 mb-6">Заказ #{{ order.id }}</h2>
+    <div class="space-y-4">
+        <p class="text-lg text-gray-700"><strong>Клиент:</strong> {{ order.first_name }} {{ order.last_name }} {% if order.patronymic %}{{ order.patronymic }}{% endif %}</p>
+        <p class="text-lg text-gray-700"><strong>Телефон:</strong> {{ order.phone }}</p>
+        <p class="text-lg text-gray-700"><strong>Email:</strong> {{ order.email }}</p>
+        <p class="text-lg text-gray-700"><strong>Адрес:</strong> {{ order.address }}</p>
+        <p class="text-lg text-gray-700"><strong>Сумма:</strong> {{ order.total_price }} ₽</p>
+        <p class="text-lg text-gray-700"><strong>Тип доставки:</strong> {{ order.get_delivery_type_display }}</p>
+        <p class="text-lg text-gray-700"><strong>Дата:</strong> {{ order.created_at|date:"d.m.Y H:i" }}</p>
+        {% if order.orderitem_set.all %}
+            <div class="mt-4">
+                <h3 class="text-lg font-semibold text-gray-700 mb-2">Состав заказа:</h3>
+                <ul class="list-disc pl-5">
+                    {% for item in order.orderitem_set.all %}
+                    <li class="text-gray-600">{{ item.dish.name }} x {{ item.quantity }} ({{ item.dish.price }} ₽/шт)</li>
+                    {% endfor %}
+                </ul>
+            </div>
+        {% endif %}
+        {% if order.delivery %}
+            <div class="mt-4">
+                <h3 class="text-lg font-semibold text-gray-700 mb-2">Информация о доставке:</h3>
+                <p class="text-gray-600"><strong>Статус:</strong> {{ order.delivery.status }}</p>
+                {% if order.delivery.courier_info %}
+                <p class="text-gray-600"><strong>Курьер:</strong> {{ order.courier_info }}</p>
+                {% endif %}
+                {% if order.delivery.estimated_time %}
+                <p class="text-gray-600"><strong>Ориентировочное время:</strong> {{ order.delivery.estimated_time|date:"d.m.Y H:i" }}</p>
+                {% endif %}
+            </div>
+        {% endif %}
+        <div class="mt-6 flex flex-wrap gap-3">
+            {% if user.is_admin %}
+            <a href="{% url 'order_update' order.id %}" class="inline-flex items-center px-4 py-2 bg-yellow-500 text-white font-semibold rounded-lg hover:bg-yellow-600 transition-colors duration-200">Редактировать</a>
+            <a href="{% url 'order_delete' order.id %}" class="inline-flex items-center px-4 py-2 bg-red-600 text-white font-semibold rounded-lg hover:bg-red-700 transition-colors duration-200">Удалить</a>
+            {% endif %}
+            <a href="{% url 'order_history' %}" class="inline-flex items-center px-4 py-2 bg-blue-400 text-gray-600 font-semibold rounded-lg hover:bg-blue-600 hover:text-white transition-colors">Назад к заказам</a>
         </div>
     </div>
 </div>

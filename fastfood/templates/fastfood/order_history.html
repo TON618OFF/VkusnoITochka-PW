@@ -1,0 +1,48 @@
+{% extends 'fastfood/base.html' %}
+{% load static %}
+
+{% block title %}История заказов{% endblock %}
+
+{% block content %}
+<div class="container mx-auto px-4 py-8">
+    <h2 class="text-2xl font-bold text-red-600 mb-6 text-center">История заказов</h2>
+    
+    {% if orders %}
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {% for order in orders %}
+            <div class="bg-white p-6 rounded-lg shadow-lg">
+                <h3 class="text-xl font-semibold text-gray-800 mb-2">Заказ №{{ order.id }}</h3>
+                <p class="text-gray-600 mb-1"><strong>Дата:</strong> {{ order.created_at|date:"d.m.Y H:i" }}</p>
+                <p class="text-gray-600 mb-1"><strong>Тип доставки:</strong> {{ order.get_delivery_type_display }}</p>
+                <p class="text-gray-600 mb-1"><strong>Сумма:</strong> {{ order.total_price }} ₽</p>
+                <p class="text-gray-600 mb-1"><strong>Имя:</strong> {{ order.first_name }} {{ order.last_name }} {% if order.patronymic %}{{ order.patronymic }}{% endif %}</p>
+                <p class="text-gray-600 mb-1"><strong>Телефон:</strong> {{ order.phone }}</p>
+                <p class="text-gray-600 mb-1"><strong>Email:</strong> {{ order.email }}</p>
+                <p class="text-gray-600 mb-1"><strong>Адрес:</strong> {{ order.address }}</p>
+                
+                {% if order.delivery %}
+                <p class="text-gray-600 mb-1"><strong>Статус доставки:</strong> {{ order.delivery.status }}</p>
+                {% if order.delivery.courier_info %}
+                <p class="text-gray-600 mb-1"><strong>Курьер:</strong> {{ order.delivery.courier_info }}</p>
+                {% endif %}
+                {% if order.delivery.estimated_time %}
+                <p class="text-gray-600 mb-1"><strong>Ориентировочное время:</strong> {{ order.delivery.estimated_time|date:"d.m.Y H:i" }}</p>
+                {% endif %}
+                {% endif %}
+                
+                <div class="mt-4">
+                    <h4 class="text-lg font-semibold text-gray-700 mb-2">Состав заказа:</h4>
+                    <ul class="list-disc pl-5">
+                        {% for item in order.orderitem_set.all %}
+                        <li class="text-gray-600">{{ item.dish.name }} x {{ item.quantity }} ({{ item.dish.price }} ₽/шт.)</li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <p class="text-center text-gray-600">Заказы отсутствуют.</p>
+    {% endif %}
+</div>
+{% endblock %}

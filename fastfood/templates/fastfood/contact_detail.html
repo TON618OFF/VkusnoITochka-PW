@@ -11,6 +11,7 @@
                 <p class="text-lg text-gray-700"><strong>Email:</strong> <a href="mailto:{{ contact.email }}" class="text-yellow-500 hover:text-yellow-600">{{ contact.email }}</a></p>
             </div>
             <div class="flex flex-wrap gap-4">
+                {% if user.is_staff %}
                 <a href="{% url 'contact_update' contact.pk %}" 
                    class="inline-flex items-center px-4 py-2 bg-yellow-500 text-white font-semibold rounded-lg hover:bg-yellow-600 transition-colors duration-200">
                     Редактировать
@@ -19,9 +20,10 @@
                    class="inline-flex items-center px-4 py-2 bg-red-600 text-white font-semibold rounded-lg hover:bg-red-700 transition-colors duration-200">
                     Удалить
                 </a>
+                {% endif %}
                 <a href="{% url 'contacts' %}" 
-                   class="inline-flex items-center px-4 py-2 bg-gray-500 text-white font-semibold rounded-lg hover:bg-gray-600 transition-colors duration-200">
-                    Назад к контактам
+                   class="inline-flex items-center px-4 py-2 bg-gray-400 text-white font-semibold rounded-lg hover:bg-gray-600 transition-colors">
+                    Назад к списку
                 </a>
             </div>
         </div>

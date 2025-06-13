@@ -1,23 +1,44 @@
 {% extends 'fastfood/base.html' %}
+{% load static %}
+
 {% block title %}Акции{% endblock %}
+
 {% block content %}
-<div class="bg-white p-6 rounded-lg shadow-lg">
-    <h2 class="text-2xl font-bold text-red-600 mb-4">Акции</h2>
-    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+<div class="container mx-auto px-4 py-8">
+    <h1 class="text-3xl font-bold text-center mb-8">Наши акции</h1>
+    
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {% for promotion in promotions %}
-        <div class="border border-gray-200 p-4 rounded-lg hover:shadow-md transition duration-300 flex flex-col promotion-card">
+        <div class="bg-white shadow-md rounded-lg overflow-hidden">
             {% if promotion.image %}
-            <img src="{{ promotion.image.url }}" alt="{{ promotion.title }}" class="w-full max-h-48 object-contain rounded mb-2">
+            <img src="{{ promotion.image.url }}" alt="{{ promotion.title }}" class="w-full h-48 object-cover">
+            {% else %}
+            <div class="w-full h-48 bg-gray-800 flex items-center justify-center">
+                <span class="text-gray-400">Нет изображения</span>
+            </div>
             {% endif %}
-            <h3 class="text-xl font-semibold text-gray-800">{{ promotion.title }}</h3>
-            <p class="text-gray-600 flex-grow">{{ promotion.description|truncatewords:20 }}</p>
-            <p class="text-gray-700"><strong>С:</strong> {{ promotion.start_date }} <strong>По:</strong> {{ promotion.end_date }}</p>
-            <a href="{% url 'promotion_detail' promotion.pk %}" class="text-yellow-500 hover:text-yellow-600 font-semibold mt-2">Подробнее</a>
+            <div class="p-6">
+                <h2 class="text-2xl font-semibold mb-3">{{ promotion.title }}</h2>
+                <p class="text-gray-600 mb-2">{{ promotion.description|truncatewords:30 }}</p>
+                <p class="text-gray-500 mb-3">С {{ promotion.start_date }} по {{ promotion.end_date }}</p>
+                <a href="{% url 'promotion_detail' promotion.pk %}" class="text-red-600 hover:text-red-800 font-medium">Подробнее</a>
+                {% if user.is_staff %}
+                <div class="mt-4 flex space-x-2">
+                    <a href="{% url 'promotion_update' promotion.pk %}" class="bg-yellow-600 text-white px-4 py-2 rounded hover:bg-yellow-700">Редактировать</a>
+                    <a href="{% url 'promotion_delete' promotion.pk %}" class="bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700" onclick="return confirm('Вы уверены, что хотите удалить эту акцию?');">Удалить</a>
+                </div>
+                {% endif %}
+            </div>
         </div>
         {% empty %}
-        <p class="text-gray-700">Акции отсутствуют.</p>
+        <p class="text-center text-gray-600 col-span-full">Акции отсутствуют.</p>
         {% endfor %}
     </div>
-    <a href="{% url 'promotion_create' %}" class="mt-6 inline-block bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700">Добавить акцию</a>
+
+    {% if user.is_staff %}
+    <div class="text-center mt-8">
+        <a href="{% url 'promotion_create' %}" class="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700">Создать акцию</a>
+    </div>
+    {% endif %}
 </div>
 {% endblock %}

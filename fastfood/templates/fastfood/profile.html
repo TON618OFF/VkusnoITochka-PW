@@ -1,0 +1,25 @@
+{% extends 'fastfood/base.html' %}
+{% block title %}Профиль{% endblock %}
+{% block content %}
+<div class="max-w-5xl mx-auto">
+    <div class="bg-white p-6 rounded-lg shadow-lg">
+        <h2 class="text-2xl font-bold text-red-600 mb-4">Профиль</h2>
+        <div class="mb-4">
+            <p class="text-gray-700"><strong>Логин:</strong> {{ user.username|default:"—"}}</p>
+            <p class="text-gray-700"><strong>Email:</strong> {{ user.email|default:"—"}}</p>
+            <p class="text-gray-700"><strong>Фамилия:</strong> {{ profile.last_name|default:"—"}}</p>
+            <p class="text-gray-700"><strong>Имя:</strong> {{ profile.first_name|default:"—"}}</p>
+            <p class="text-gray-700"><strong>Отчество:</strong> {{ profile.patronymic|default:"—" }}</p>
+            <p class="text-gray-700"><strong>Телефон:</strong> {{ profile.phone|default:"—"}}</p>
+            <p class="text-gray-700"><strong>Адрес:</strong> {{ profile.address|default:"—" }}</p>
+        </div>
+        <div class="flex space-x-4">
+            <a href="{% url 'order_history' %}" class="bg-yellow-500 text-white px-4 py-2 rounded hover:bg-yellow-600">Мои заказы</a>
+            <form action="{% url 'logout' %}" method="post" class="inline">
+                {% csrf_token %}
+                <button type="submit" class="bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700">Выйти</button>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

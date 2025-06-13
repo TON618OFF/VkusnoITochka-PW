@@ -1,42 +1,46 @@
 from django.shortcuts import render, get_object_or_404, redirect
-from django.views.generic import TemplateView, ListView, DetailView, CreateView, UpdateView, DeleteView, View
+from django.views.generic import TemplateView, ListView, DetailView, CreateView, UpdateView, DeleteView
 from django.urls import reverse_lazy
-from .models import Category, Dish, Promotion, Order, Contact, DeliveryInfo
-from .forms import ContactForm, CategoryForm, DishForm, PromotionForm, OrderForm
+from django.contrib.auth.views import LoginView, LogoutView
+from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
+from django.contrib.auth import login
+from django.contrib.auth.models import User, Group
+from .models import Category, Dish, Promotion, Order, Contact, Delivery, UserProfile
+from .forms import UserRegistrationForm, UserProfileForm, UserLoginForm, ContactForm, CategoryForm, DishForm, PromotionForm, OrderForm
 
-# Create your views here.
+class AdminRequiredMixin(UserPassesTestMixin):
+    def test_func(self):
+        return self.request.user.is_staff
+
 class HomeView(TemplateView):
     template_name = 'fastfood/home.html'
 
 class AboutView(TemplateView):
     template_name = 'fastfood/about.html'
 
-class ContactsView(TemplateView):
+class ContactsView(ListView):
+    model = Contact
     template_name = 'fastfood/contacts.html'
-    
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context['contacts'] = Contact.objects.all()
-        return context
+    context_object_name = 'contacts'
 
 class ContactDetailView(DetailView):
     model = Contact
     template_name = 'fastfood/contact_detail.html'
     context_object_name = 'contact'
 
-class ContactCreateView(CreateView):
+class ContactCreateView(AdminRequiredMixin, CreateView):
     model = Contact
     template_name = 'fastfood/contact_form.html'
     form_class = ContactForm
     success_url = reverse_lazy('contacts')
 
-class ContactUpdateView(UpdateView):
+class ContactUpdateView(AdminRequiredMixin, UpdateView):
     model = Contact
     template_name = 'fastfood/contact_form.html'
     form_class = ContactForm
     success_url = reverse_lazy('contacts')
 
-class ContactDeleteView(DeleteView):
+class ContactDeleteView(AdminRequiredMixin, DeleteView):
     model = Contact
     template_name = 'fastfood/contact_confirm_delete.html'
     success_url = reverse_lazy('contacts')
@@ -54,19 +58,19 @@ class CategoryDetailView(DetailView):
     template_name = 'fastfood/category_detail.html'
     context_object_name = 'category'
 
-class CategoryCreateView(CreateView):
+class CategoryCreateView(AdminRequiredMixin, CreateView):
     model = Category
     template_name = 'fastfood/category_form.html'
     form_class = CategoryForm
     success_url = reverse_lazy('category_list')
 
-class CategoryUpdateView(UpdateView):
+class CategoryUpdateView(AdminRequiredMixin, UpdateView):
     model = Category
     template_name = 'fastfood/category_form.html'
     form_class = CategoryForm
     success_url = reverse_lazy('category_list')
 
-class CategoryDeleteView(DeleteView):
+class CategoryDeleteView(AdminRequiredMixin, DeleteView):
     model = Category
     template_name = 'fastfood/category_confirm_delete.html'
     success_url = reverse_lazy('category_list')
@@ -85,6 +89,7 @@ class DishListView(ListView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
+        context['categories'] = Category.objects.all()
         category_id = self.kwargs.get('category_id')
         if category_id:
             context['current_category'] = get_object_or_404(Category, pk=category_id)
@@ -95,72 +100,22 @@ class DishDetailView(DetailView):
     template_name = 'fastfood/dish_detail.html'
     context_object_name = 'dish'
 
-class DishCreateView(CreateView):
+class DishCreateView(AdminRequiredMixin, CreateView):
     model = Dish
     template_name = 'fastfood/dish_form.html'
     form_class = DishForm
     success_url = reverse_lazy('dish_list')
 
-class DishUpdateView(UpdateView):
+class DishUpdateView(AdminRequiredMixin, UpdateView):
     model = Dish
     template_name = 'fastfood/dish_form.html'
     form_class = DishForm
     success_url = reverse_lazy('dish_list')
 
-class DishDeleteView(DeleteView):
+class DishDeleteView(AdminRequiredMixin, DeleteView):
     model = Dish
     template_name = 'fastfood/dish_confirm_delete.html'
     success_url = reverse_lazy('dish_list')
-
-class CartView(TemplateView):
-    template_name = 'fastfood/cart.html'
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        cart = self.request.session.get('cart', {})
-        cart_items = []
-        total_price = 0
-
-        for dish_id, item in cart.items():
-            dish = get_object_or_404(Dish, pk=dish_id)
-            item_total = item['quantity'] * item['price']
-            cart_items.append({
-                'dish': dish,
-                'quantity': item['quantity'],
-                'price': item['price'],
-                'total_price': item_total
-            })
-            total_price += item_total
-
-        context['cart'] = cart_items
-        context['total_price'] = total_price
-        return context
-
-class CartAddView(View):
-    def get(self, request, dish_id):
-        dish = get_object_or_404(Dish, pk=dish_id)
-        cart = request.session.get('cart', {})
-        
-        if str(dish_id) in cart:
-            cart[str(dish_id)]['quantity'] += 1
-        else:
-            cart[str(dish_id)] = {
-                'quantity': 1,
-                'price': float(dish.price)
-            }
-        
-        request.session['cart'] = cart
-        request.session.modified = True
-        return redirect('cart')
-
-class CartRemoveView(View):
-    def get(self, request, dish_id):
-        cart = request.session.get('cart', {})
-        if str(dish_id) in cart:
-            del cart[str(dish_id)]
-            request.session['cart'] = cart
-            request.session.modified = True
-        return redirect('cart')
 
 class PromotionListView(ListView):
     model = Promotion
@@ -172,54 +127,115 @@ class PromotionDetailView(DetailView):
     template_name = 'fastfood/promotion_detail.html'
     context_object_name = 'promotion'
 
-class PromotionCreateView(CreateView):
+class PromotionCreateView(AdminRequiredMixin, CreateView):
     model = Promotion
     template_name = 'fastfood/promotion_form.html'
     form_class = PromotionForm
     success_url = reverse_lazy('promotion_list')
 
-class PromotionUpdateView(UpdateView):
+class PromotionUpdateView(AdminRequiredMixin, UpdateView):
     model = Promotion
     template_name = 'fastfood/promotion_form.html'
     form_class = PromotionForm
     success_url = reverse_lazy('promotion_list')
 
-class PromotionDeleteView(DeleteView):
+class PromotionDeleteView(AdminRequiredMixin, DeleteView):
     model = Promotion
     template_name = 'fastfood/promotion_confirm_delete.html'
     success_url = reverse_lazy('promotion_list')
 
-class OrderListView(ListView):
+class OrderListView(AdminRequiredMixin, ListView):
     model = Order
     template_name = 'fastfood/order_list.html'
     context_object_name = 'orders'
 
-class OrderDetailView(DetailView):
+class OrderDetailView(AdminRequiredMixin, DetailView):
     model = Order
     template_name = 'fastfood/order_detail.html'
     context_object_name = 'order'
 
-class OrderCreateView(CreateView):
+class OrderCreateView(AdminRequiredMixin, CreateView):
     model = Order
     template_name = 'fastfood/order_form.html'
     form_class = OrderForm
     success_url = reverse_lazy('order_list')
 
-class OrderUpdateView(UpdateView):
+class OrderUpdateView(AdminRequiredMixin, UpdateView):
     model = Order
     template_name = 'fastfood/order_form.html'
     form_class = OrderForm
     success_url = reverse_lazy('order_list')
 
-class OrderDeleteView(DeleteView):
+class OrderDeleteView(AdminRequiredMixin, DeleteView):
     model = Order
     template_name = 'fastfood/order_confirm_delete.html'
     success_url = reverse_lazy('order_list')
 
-class DeliveryView(TemplateView):
+class DeliveryView(LoginRequiredMixin, ListView):
+    model = Delivery
     template_name = 'fastfood/delivery.html'
-    
+    context_object_name = 'deliveries'
+
+    def get_queryset(self):
+        return Delivery.objects.filter(order__user=self.request.user, order__delivery_type='courier')
+
+class UserLoginView(LoginView):
+    template_name = 'fastfood/login.html'
+    form_class = UserLoginForm
+    redirect_authenticated_user = True
+
+class UserLogoutView(LogoutView):
+    next_page = reverse_lazy('home')
+
+class RegisterView(CreateView):
+    template_name = 'fastfood/register.html'
+    form_class = UserRegistrationForm
+    success_url = reverse_lazy('profile')
+
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['delivery_info'] = DeliveryInfo.objects.first()
+        context['profile_form'] = UserProfileForm()
         return context
+
+    def form_valid(self, form):
+        profile_form = UserProfileForm(self.request.POST)
+        if profile_form.is_valid():
+            user = form.save(commit=False)
+            user.set_password(form.cleaned_data['password'])
+            user.save()
+            profile = profile_form.save(commit=False)
+            profile.user = user
+            profile.save()
+            clients_group = Group.objects.get_or_create(name='Clients')[0]
+            user.groups.add(clients_group)
+            login(self.request, user)
+            return redirect(self.success_url)
+        else:
+            self.object = None
+            return self.form_invalid(form)
+
+class ProfileView(LoginRequiredMixin, TemplateView):
+    template_name = 'fastfood/profile.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        try:
+            profile = UserProfile.objects.get(user=self.request.user)
+        except UserProfile.DoesNotExist:
+            profile = UserProfile.objects.create(
+                user=self.request.user,
+                last_name='',
+                first_name='',
+                phone='',
+                address=''
+            )
+        context['profile'] = profile
+        return context
+
+class OrderHistoryView(LoginRequiredMixin, ListView):
+    model = Order
+    template_name = 'fastfood/order_history.html'
+    context_object_name = 'orders'
+
+    def get_queryset(self):
+        return Order.objects.filter(user=self.request.user)

@@ -1,5 +1,12 @@
-from django.urls import path
-from .views import *
+from django.urls import path, include
+from .views import (
+    HomeView, AboutView, ContactsView, ContactDetailView, ContactCreateView, ContactUpdateView, ContactDeleteView,
+    FindUsView, CategoryListView, CategoryDetailView, CategoryCreateView, CategoryUpdateView, CategoryDeleteView,
+    DishListView, DishDetailView, DishCreateView, DishUpdateView, DishDeleteView,
+    PromotionListView, PromotionDetailView, PromotionCreateView, PromotionUpdateView, PromotionDeleteView,
+    OrderListView, OrderDetailView, OrderCreateView, OrderUpdateView, OrderDeleteView,
+    DeliveryView, UserLoginView, UserLogoutView, RegisterView, ProfileView, OrderHistoryView,
+)
 
 urlpatterns = [
     path('', HomeView.as_view(), name='home'),
@@ -21,9 +28,6 @@ urlpatterns = [
     path('dishes/add/', DishCreateView.as_view(), name='dish_create'),
     path('dishes/<int:pk>/edit/', DishUpdateView.as_view(), name='dish_update'),
     path('dishes/<int:pk>/delete/', DishDeleteView.as_view(), name='dish_delete'),
-    path('cart/', CartView.as_view(), name='cart'),
-    path('cart/add/<int:dish_id>/', CartAddView.as_view(), name='cart_add'),
-    path('cart/remove/<int:dish_id>/', CartRemoveView.as_view(), name='cart_remove'),
     path('promotions/', PromotionListView.as_view(), name='promotion_list'),
     path('promotions/<int:pk>/', PromotionDetailView.as_view(), name='promotion_detail'),
     path('promotions/add/', PromotionCreateView.as_view(), name='promotion_create'),
@@ -35,4 +39,10 @@ urlpatterns = [
     path('orders/<int:pk>/edit/', OrderUpdateView.as_view(), name='order_update'),
     path('orders/<int:pk>/delete/', OrderDeleteView.as_view(), name='order_delete'),
     path('delivery/', DeliveryView.as_view(), name='delivery'),
+    path('login/', UserLoginView.as_view(), name='login'),
+    path('logout/', UserLogoutView.as_view(), name='logout'),
+    path('register/', RegisterView.as_view(), name='register'),
+    path('profile/', ProfileView.as_view(), name='profile'),
+    path('profile/orders/', OrderHistoryView.as_view(), name='order_history'),
+    path('cart/', include('vkusno_cart.urls')),
 ]
