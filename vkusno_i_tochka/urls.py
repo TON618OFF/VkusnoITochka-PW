@@ -25,6 +25,7 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('', include('fastfood.urls')),
     path('', include('vkusno_cart.urls')),
+    path('api/', include('api_fastfood.urls'))
 ]
 
 if settings.DEBUG:

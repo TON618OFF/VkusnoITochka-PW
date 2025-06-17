@@ -38,7 +38,8 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'fastfood',
-    'vkusno_cart'
+    'vkusno_cart',
+    'rest_framework'
 ]
 
 MIDDLEWARE = [
@@ -127,6 +128,9 @@ MEDIA_ROOT = BASE_DIR / "media"
 LOGIN_URL = '/login/'
 LOGIN_REDIRECT_URL = '/'
 LOGOUT_REDIRECT_URL = '/'
+REST_FRAMEWORK = {
+    'DATETIME_FORMAT': "%d.%m.%Y %H:%M:%S.%f%z"
+}
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
