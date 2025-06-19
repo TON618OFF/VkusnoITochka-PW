@@ -77,12 +77,12 @@ WSGI_APPLICATION = 'vkusno_i_tochka.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'HOST': '127.0.0.1',
-        'PORT': '5432',
-        'NAME': 'VkusnoITochka',
-        'USER': 'postgres',
-        'PASSWORD': '1'
+        'ENGINE': 'django.db.backends.mysql',
+        'HOST': '',
+        'PORT': '3306',
+        'NAME': '$VkusnoITochka',
+        'USER': '',
+        'PASSWORD': ''
     }
 }
 
